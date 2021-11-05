@@ -12,7 +12,16 @@ check_internet() {
   fi
 }
 disk_partition() {
-
+  echo the calculations done here are approximate
+  echo enter the name of disk you want to use
+  read diskname
+  totalsize=$(($(lsblk -b --output SIZE -n -d $diskname) / $((1024 * 1024 * 1024))))
+  echo the total size of $diskname is $totalsize GB
+  echo we will use 512MiB for efi partition
+  echo 'enter the size of swap partition (at least 10GiB should remain for root partition)'
+  read swapsize
+  root=$(($totalsize - $swapsize))
+  echo ",512 MiB, U, *\n, $swapsize, S, \n, $root GiB, L, \n" | sfdisk
 }
 format_partitions() {
   mkfs.ext4 $root_partition
@@ -56,7 +65,7 @@ localisation() {
 network_conf() {
   echo "Give a hostname(machine name) for your machine : "
   read hostname
-  until [[ -n $hostname ]] do
+  until [[ -n $hostname ]]; do
     echo "Enter a non empty hostname: "
     read hostname
   done
@@ -70,7 +79,7 @@ network_conf() {
 rootpasswd_setup() {
   echo "Enter password for root(administer) account : "
   read pass;
-  until [[ -n $pass ]] do
+  until [[ -n $pass ]]; do
     echo "Enter a non empty passwd: "
     read pass
   done
@@ -86,5 +95,6 @@ bootloader_setup() {
   echo "Creating config file..."
   grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
 }
-check_internet
-timezone
+#check_internet
+#timezone
+disk_partition
