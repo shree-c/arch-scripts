@@ -1,0 +1,77 @@
+the script only works in uefi mode
+only does ext4 partition
+directly sets english utf8 as locale and us-simple keyboard
+directly sets up grub as booloader
+ls the /sys/firmware/efi/efivars. if there are files in the directory then the system is booted in uefi mode
+check for internet connection. exit if not connnected.
+update the systemclock to ntp service
+diskpartition();
+formatpartitions();
+mountingfilesystems();
+essential_package_install_using_pacstrap();
+genertaing_fstab();
+cherooting_to_system();
+timezone_update();
+localisation();
+network_conf();
+passwd_for_root();
+bootloader_setup();
+
+function diskpartition() {
+  saving different partition names in global variables;
+  outputting partition layout;
+}
+
+function formatpartitions() {
+  format root partition to ext4;
+  format swap for swapping;
+  fromat boot partition to fat;
+}
+
+function mountingfilesystems() {
+  mount root to /mnt;
+  make /mnt/boot directory;
+  mount boot partition to /mnt/boot;
+}
+
+function essential_package_install_using_pacstrap() {
+  install packages to /mnt using pacstrap;
+}
+
+function generating_fstab() {
+  generate fstab file using approprite command;
+}
+
+function cherooting_to_system() {
+  arch-chroot /mnt;
+}
+
+function timezone_update() {
+  setup timezone;
+  update hardware clock;
+}
+
+function localisation() {
+  edit locale.gen file for english;
+  locale-gen command execute;
+  adding lang env variable to loacle.conf;
+}
+
+function network_conf() {
+  asking for hostname;
+  setting host name in /etc/hostname;
+  adding dirver code to /etc/hosts;
+  installing dhcpcd;
+  enabling dhcpcd;
+}
+
+function root_passwd() {
+  asking for password and setting up root password;
+}
+
+function bootloader_setup() {
+  installing grub, efiboomgr;
+  grub-install --target=x86_64-efi --efi-directory=esp --bootloader-id=GRUB
+  grub-mkconfig -o /boot/grub/grub.cfg;
+}
+
