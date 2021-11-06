@@ -27,12 +27,13 @@ disk_partition() {
   echo 'enter the size of swap partition (at least 10GiB should remain for root partition)'
   read swapsize
   root=$(($totalsize - $swapsize))
-  echo -e "label:gpt\n,512MiB, U, *\n, ${swapsize}GiB, S, \n, ${root}GiB, L, \n"
+  echo -e "label:gpt\n,512MiB, U, *\n, ${swapsize}GiB, S, \n, ${root}GiB, L, \n" | sfdisk $diskname
 }
 format_partitions() {
-  mkfs.ext4 $root_partition
-  mkfs.fat  $boot_partition
-  mkswap $swap_partiton
+  umount
+  mkfs.ext4 /dev/vda3
+  mkfs.fat  /dev/vda1
+  mkswap /dev/vda2
 }
 
 mount_partition() {
@@ -43,7 +44,7 @@ mount_partition() {
   swapon $swap_partition
 }
 
-pacstrap() {
+pacstrap_install() {
   pacstrap /mnt base linux linux-firmware  
 }
 
@@ -102,12 +103,17 @@ bootloader_setup() {
   echo "Creating config file..."
   grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
 }
+cd ~
 check_efi
 check_internet
 disk_partition
-format_partitions
+if ! format_partitions
+then
+  echo error in formatting partitions
+  exit -1
+fi
 mount_partition
-pacstrap
+pacstrap_install
 fstab
 chroot
 timezone
