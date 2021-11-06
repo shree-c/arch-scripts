@@ -21,7 +21,7 @@ disk_partition() {
   echo 'enter the size of swap partition (at least 10GiB should remain for root partition)'
   read swapsize
   root=$(($totalsize - $swapsize))
-  echo -e "label:gpt\n,512 MiB, U, *\n, $swapsize, S, \n, $root GiB, L, \n"
+  echo -e "label:gpt\n,512MiB, U, *\n, ${swapsize}GiB, S, \n, ${root}GiB, L, \n"
 }
 format_partitions() {
   mkfs.ext4 $root_partition
