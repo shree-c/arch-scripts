@@ -1,7 +1,13 @@
 #!/bin/bash
 
 #testing internet connectivity
-
+check_efi() {
+  if !ls /sys/firmware/efi/efivars
+  then
+    echo 'not booted in uefi mode'
+    exit -1
+  fi
+}
 check_internet() {
   if ping -q -c 1 -W 1 'google.com' &> /dev/null; then
     echo "The network is up"
@@ -95,6 +101,16 @@ bootloader_setup() {
   echo "Creating config file..."
   grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
 }
-#check_internet
-#timezone
+check_efi
+check_internet
 disk_partition
+format_partitions
+mount_partition
+pacstrap
+fstab
+chroot
+timezone
+localisation
+network_conf
+rootpasswd_setup
+bootloader_setup 
