@@ -37,6 +37,7 @@ format_partitions() {
 
 mount_partition() {
   mount $root_partition /mnt
+  rm -rf /mnt/boot
   mkdir /mnt/boot;
   mount $boot_partition /mnt/boot
   swapon $swap_partition
