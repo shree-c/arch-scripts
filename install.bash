@@ -37,11 +37,11 @@ format_partitions() {
 }
 
 mount_partition() {
-  mount $root_partition /mnt
-  rm -rf /mnt/boot
+  mount /dev/vda3 /mnt
+  rm -rf /mnt/boot &> /dev/null
   mkdir /mnt/boot;
-  mount $boot_partition /mnt/boot
-  swapon $swap_partition
+  mount /dev/vda1 /mnt/boot
+  swapon /dev/vda2
 }
 
 pacstrap_install() {
